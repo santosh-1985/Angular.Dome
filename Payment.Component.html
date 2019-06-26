@@ -1,0 +1,104 @@
+<ProcessHeader [RSALogoDisability]="RSALogoDisability"></ProcessHeader>
+
+<nav [ngSwitch]="isPaymentProcess" class="restPages">
+    <ul class="nav navbar-nav" *ngSwitchCase="'Yes'">
+        <li><a>Dashboard</a></li>
+        <li class="active"><a>Payment</a></li>
+        <li><a>Cancellation</a></li>
+    </ul>
+    <ul class="nav navbar-nav" *ngSwitchDefault>
+        <li><a [routerLink]="['/dashboard']">Dashboard</a></li>
+        <li class="active"><a>Payment</a></li>
+        <li><a [routerLink]="['/pet-cancellation-argos']">Cancellation</a></li>
+    </ul>
+</nav>
+
+<div class="content-wrapper">
+    <subNavigation (thankYouFlag)="onThankYouSuccess($event)"></subNavigation>
+    <div class="row content-block">
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="header">
+                    <span>PREMIUM INFOMATION</span>
+                </div>
+                <div class="content-info">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <label>Total to Pay</label>
+                            <label class="fieldVal inline">&pound; {{totalToPay}}</label>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pet</th>
+                                    <th>Premium</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let d of petPremiumDetails; let i=index">
+                                    <td>{{d.name}}</td>
+                                    <td>&pound; {{d.premium}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <div *ngIf="InstallmentFlag" class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Instalment Collection Date</th>
+                                    <th>Instalment Due Date</th>
+                                    <th>Instalment Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let d of PetPaymentInstallmentDetails; let i=index">
+                                    <td *ngIf="i<2"> {{d.installmentCollectionDate}}</td>
+                                    <td *ngIf="i<2">{{d.installmentDueDate}}</td>
+                                    <td *ngIf="i<2" [innerHTML]="(d.installmentDueAmount==emptyString)?d.installmentDueAmount:(poundSign[0]+singleSpace+emptyString+d.installmentDueAmount)"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br>
+                <div *ngIf="earlySettlementVisibility" class="row">
+                    <div class="col-xs-3">
+                        <span class="checkbox" id="earlySettlement">
+							<label>
+								<input id="earlySettle" type="checkbox" [disabled]="isROR!=false" (change)="onChangeEarlySettlement($event.target.checked)" name="earlySettlement" value="">
+								<span></span> <em>Early Settlement</em>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <button [disabled]="issueRenewalDisability || isROR" class="btn btn-primary" (click)="BtnIssueRenewalClick()">Issue Renewal</button>
+                        <!--<h5 style="color:red;font-weight:bold">{{discountSuccessMsg}}</h5>-->
+                    </div>
+                    <div class="col-xs-3">
+                        <label>Reference Number</label>
+                        <label class="fieldVal">{{referenceNumber}}</label>
+                    </div>
+                </div>
+                <h5 style="color:red;font-weight:bold">{{discountSuccessMsg}}</h5>
+                <div class="row">
+                    <div class="col-xs-9 catDisclaimer">
+                        <label>Disclaimer</label>
+                        <ul><li style="color:#333;">"If you miss any payments, your insurance policy may be terminated and you will be no longer insured with us."</li></ul>
+                        <ul><li style="color:#333;">"We will take payment in the next 24-48 hours."</li></ul>
+                         <ul><li style="color:#333;">"Is the card in your name and can you authorise debits on this account?"</li></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer></footer>
+<AfterCallArgos [thankYouFlag]="thankYouFlag" [voucherDescription]="voucherDescription" [processName]="processName" [PaymentStatus]="PaymentStatus"></AfterCallArgos>
+<exception-modal [validationMsgList]="validationMsgList" [sPolicyNumber]="policyNumber" (afterCallHit)="afterCallSubmit()"></exception-modal>
